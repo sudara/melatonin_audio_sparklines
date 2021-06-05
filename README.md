@@ -60,7 +60,9 @@ E = out of bounds (below -1.0 or above 1.0)
 Here's what 2 cycles of a healthy sine wave look like (it keeps scrolling right) with all samples represented:
 
 
->```[0———⎻⎻⎻⎻⎻⎻⎻‾‾‾‾‾‾‾‾⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺‾‾‾‾‾‾‾‾‾⎻⎻⎻⎻⎻⎻⎻———x——⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽⎽⎽⎽____________________________________⎽⎽⎽⎽⎽⎽⎽⎽⎼⎼⎼⎼⎼⎼⎼————x——⎻⎻⎻⎻⎻⎻⎻‾‾‾‾‾‾‾‾⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺‾‾‾‾‾‾‾‾‾⎻⎻⎻⎻⎻⎻⎻———x——⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽⎽⎽⎽____________________________________⎽⎽⎽⎽⎽⎽⎽⎽⎼⎼⎼⎼⎼⎼⎼———]```
+```
+[0———⎻⎻⎻⎻⎻⎻⎻‾‾‾‾‾‾‾‾⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺‾‾‾‾‾‾‾‾‾⎻⎻⎻⎻⎻⎻⎻———x——⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽⎽⎽⎽____________________________________⎽⎽⎽⎽⎽⎽⎽⎽⎼⎼⎼⎼⎼⎼⎼————x——⎻⎻⎻⎻⎻⎻⎻‾‾‾‾‾‾‾‾⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺‾‾‾‾‾‾‾‾‾⎻⎻⎻⎻⎻⎻⎻———x——⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽⎽⎽⎽____________________________________⎽⎽⎽⎽⎽⎽⎽⎽⎼⎼⎼⎼⎼⎼⎼———]
+```
 
 Cool! It's bulky and elongated, but we can see some trends...
 
@@ -101,14 +103,7 @@ Now we can see the shape of the waveform and look to the metadata for the scale.
 
 ## More complex examples
 
-Here's an example of block going out of audio bounds. The `E` lets you know a sample is out of bounds. We can see a big chunk at the end of the block is empty. 
-
->```Buffer is 1024 samples, min -1.76012, max 1.76013
-[0—————————————————————⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻——————————x—————————————⎼⎼⎼⎼⎼⎼⎼⎼⎼——————————————x—————————⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻——————x————⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽______EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE____⎽⎽⎽⎽⎼⎼⎼——x—⎻⎻⎻‾‾‾‾⎺⎺⎺EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE⎺⎺⎺⎺⎺‾‾‾‾‾⎻⎻⎻⎻⎻————x——⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼—————x————⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻————x——⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽_____EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE____⎽⎽⎽⎼⎼⎼⎼—0—⎻⎻⎻⎻‾‾‾⎺⎺⎺⎺EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE⎺⎺⎺⎺⎺‾‾‾‾⎻⎻⎻⎻⎻⎻———x———⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼—————x————⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻———x———⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽_____EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE___⎽⎽⎽⎽⎼⎼⎼——00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]```
-
-One on hand, it's really nice to visually see how much of the buffer is filled with zeros.
-
-On the other hand, this is a visual parsing nightmare, let's collapse it:
+Here's an example of block going out of audio bounds. The `E` lets you know a sample is out of bounds. We can see a big empty chunk of zeros at the end of the block, and the number 234 tells us exactly how many consecutive zeros there are.
 
 ```
 [0⎻⎺⎻x—x⎻x—⎼⎽_E_⎽⎼—x⎻⎺‾E‾⎺⎻x—⎼—x⎻⎺⎻x—⎼⎽_E_⎽⎼—0⎻⎺‾E‾⎺⎻x—⎼—x⎻⎺⎻x—⎼⎽_E_⎽⎼—0(234)] 1024 samples (-1.76012, 1.76013)
