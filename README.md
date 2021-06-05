@@ -1,6 +1,15 @@
 # Melatonin Audio Sparklines
 
-This is a C++ Juce Module with a couple helpers.
+This is a C++ JUCE module that summarizes and visualizes what's in an [AudioBlock](https://docs.juce.com/master/classdsp_1_1AudioBlock.html).
+
+It's very useful to get a quick idea of what's happening to your audio buffers during development or tests.
+
+Call `printSparkline(myBlock);` and you'll get something like this to the output console:
+
+```
+Block is 1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled
+[0—⎻⎺‾⎺⎻—x—⎼⎽_⎽⎼—]
+```
 
 ## Motivation
 
@@ -25,16 +34,12 @@ One can always write a bunch of float values to the screen, but humans can't rel
 
 I'm a big [Edward Tufte](https://www.edwardtufte.com/tufte/) fan and one of the things he champions is "data-intense, design-simple, word-sized graphics" which he gave the name "[sparkline](https://en.wikipedia.org/wiki/Sparkline)."
 
-They look like this:
 
-
-
-The idea is that "at a glance" you can tell some general characteristics about the data series. Note that individual data points are not relevant, the point is to visualize the trend.
+At a glance, you can tell some general characteristics about the data series. Individual data points are not relevant, the trend is! 
 
 I figured it might be possible to make an sparkline graph with unicode and saw that not only does unicode have [block elements](https://en.wikipedia.org/wiki/Block_Elements) but there are [already people doing sparkline bar graphs](https://rosettacode.org/wiki/Sparkline_in_unicode). 
 
 However, the block elements are vertically bottom aligned instead of center aligned, meaning they don't really parse easily as a waveform.
-
 
 ## Audio Sparklines
 
@@ -52,7 +57,7 @@ x = zero crossing
 E = out of bounds (below -1.0 or above 1.0)
 ```
 
-Here's what 2 cycles of a healthy sine wave look like:
+Here's what 2 cycles of a healthy sine wave look like (it keeps scrolling right) with all samples represented:
 
 
 ```
@@ -78,9 +83,9 @@ This is useful. We can glean a lot of info from this example:
 * We know there are 294 samples in total
 * We know the amplitude ranges from -0.999 to 0.999.
 
-However, what about when we have quieter values?
+### Normalized
 
-Then we might get something that looks like this:
+Without normalization, quiet volumes might get something that looks like this:
 
 ```
 Block is 2 channels, 128 samples, min -0.0951679, max 0.11609, 50.7812% filled
