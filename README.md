@@ -60,7 +60,7 @@ E = out of bounds (below -1.0 or above 1.0)
 Here's what 2 cycles of a healthy sine wave look like (it keeps scrolling right) with all samples represented:
 
 
-```
+>```
 [0———⎻⎻⎻⎻⎻⎻⎻‾‾‾‾‾‾‾‾⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺‾‾‾‾‾‾‾‾‾⎻⎻⎻⎻⎻⎻⎻———x——⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽⎽⎽⎽____________________________________⎽⎽⎽⎽⎽⎽⎽⎽⎼⎼⎼⎼⎼⎼⎼————x——⎻⎻⎻⎻⎻⎻⎻‾‾‾‾‾‾‾‾⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺‾‾‾‾‾‾‾‾‾⎻⎻⎻⎻⎻⎻⎻———x——⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽⎽⎽⎽____________________________________⎽⎽⎽⎽⎽⎽⎽⎽⎼⎼⎼⎼⎼⎼⎼———]
 ```
 
@@ -105,7 +105,7 @@ Now we can see the shape of the waveform and look to the metadata for the scale.
 
 Here's an example of block going out of audio bounds. The `E` lets you know a sample is out of bounds. We can see a big chunk at the end of the block is empty. 
 
-```
+>```
 Buffer is 1024 samples, min -1.76012, max 1.76013
 [0—————————————————————⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻——————————x—————————————⎼⎼⎼⎼⎼⎼⎼⎼⎼——————————————x—————————⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻——————x————⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽______EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE____⎽⎽⎽⎽⎼⎼⎼——x—⎻⎻⎻‾‾‾‾⎺⎺⎺EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE⎺⎺⎺⎺⎺‾‾‾‾‾⎻⎻⎻⎻⎻————x——⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼—————x————⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻————x——⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽_____EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE____⎽⎽⎽⎼⎼⎼⎼—0—⎻⎻⎻⎻‾‾‾⎺⎺⎺⎺EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE⎺⎺⎺⎺⎺‾‾‾‾⎻⎻⎻⎻⎻⎻———x———⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼—————x————⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻———x———⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽_____EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE___⎽⎽⎽⎽⎼⎼⎼——00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]
 ```
