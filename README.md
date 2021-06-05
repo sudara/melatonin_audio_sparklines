@@ -4,7 +4,7 @@ This is a C++ JUCE module that summarizes and visualizes what's in an [AudioBloc
 
 It's very useful to get a quick idea of what's happening to your audio buffers during development or tests.
 
-Call `printSparkline(myBlock);` and you'll get something like this to the output console:
+Call `printSparkline(myBlock);` and under the hood, DBG will be called and you'll see something like this in the output console:
 
 ```
 Block is 1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled
