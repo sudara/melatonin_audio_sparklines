@@ -141,12 +141,17 @@ This is useful. We can glean a lot of info from this example:
 
 ## More complex example
 
-Here's an example of block going out of audio bounds. The `E` lets you know a sample is out of bounds. We can see a big empty chunk of zeros at the end of the block. The number 234 tells us exactly how many consecutive zeros there are.
+Here's an example of a block going out of audio bounds (-1.0 to 1.0). 
 
 ```
-[0⎻⎺⎻x—x⎻x—⎼⎽_E_⎽⎼—x⎻⎺‾E‾⎺⎻x—⎼—x⎻⎺⎻x—⎼⎽_E_⎽⎼—0⎻⎺‾E‾⎺⎻x—⎼—x⎻⎺⎻x—⎼⎽_E_⎽⎼—0(234)] 1024 samples (-1.76012, 1.76013)
+Block is 1 channel, 1024 samples, min -1.76012, max 1.76013, 77.14% filled
+[0⎻⎺⎻x—x⎻x—⎼⎽_E_⎽⎼—x⎻⎺‾E‾⎺⎻x—⎼—x⎻⎺⎻x—⎼⎽_E_⎽⎼—0⎻⎺‾E‾⎺⎻x—⎼—x⎻⎺⎻x—⎼⎽_E_⎽⎼—0(234)]
 
 ```
+
+The `E` lets you know a sample is out of bounds. 
+
+We can see a big empty chunk of zeros at the end of the block. The number 234 tells us exactly how many consecutive zeros there are at the end.
  
 This looks clearly sinusoidal, but we can see it's going out of bounds. We still have a precise grasp of how many samples in the buffer are empty.
 
@@ -157,14 +162,14 @@ To make sure trends are visible, we normalize before displaying.
 Without normalization, a signal with a quiter volume might look like so:
 
 ```
-Block is 2 channels, 128 samples, min -0.0951679, max 0.11609, 50.7812% filled
+Block is 1 channel, 128 samples, min -0.0951679, max 0.11609, 50.7812% filled
 [—x—0(64)]
 ```
 
 Which is....pretty cryptic. Nothing a bit of normalization can't help with, though:
 
 ```
-Block is 2 channels, 128 samples, min -0.0951679, max 0.11609, 50.7812% filled
+Block is 1 channel, 128 samples, min -0.0951679, max 0.11609, 50.7812% filled
 [‾⎺⎻—x—⎼⎽_0(64)]
 ```
 
