@@ -8,7 +8,7 @@ It's nice to get a quick idea of what's happening to your audio buffers during d
 
 Call `melatonin::printSparkline(myAudioBlock);` and under the hood, DBG will be called. 
 
-If you are lucky you'll see a healthy looking wave, like this cutie little square wave spat out into your console:
+If you are lucky, you'll see a healthy looking wave (like this cutie little square wave) spat out into your console:
 
 ```
 Block is 1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled
@@ -22,16 +22,8 @@ Block is 1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled
 [0—⎻⎺‾⎺⎻—x—⎼⎽_⎽⎼—]
 ```
 
-Get the sparkline in its full sample-by-sample verbose glory:
+You can output the sparkline in full sample-by-sample uncompressed glory with `melatonin::printSparkline(myAudioBlock, false)` or display it without normalization with `melatonin::printSparkline(myAudioBlock, true, false)`.
 
-`melatonin::printSparkline(myAudioBlock, false);`
-
-
-For unnormalized display:
-
-```
-melatonin::printSparkline(myAudioBlock, true, false);
-```
 
 ## Teach lldb how to output sparklines
 
