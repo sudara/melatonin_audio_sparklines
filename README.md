@@ -2,14 +2,71 @@
 
 This is a C++ JUCE module that summarizes and visualizes what's in an [AudioBlock](https://docs.juce.com/master/classdsp_1_1AudioBlock.html).
 
-It's very useful to get a quick idea of what's happening to your audio buffers during development or tests.
+It's nice to get a quick idea of what's happening to your audio buffers during development or tests.
 
-Call `printSparkline(myBlock);` and under the hood, DBG will be called and you'll see something like this in the output console:
+## printSparkline
+
+Call `melatonin::printSparkline(myAudioBlock);` and under the hood, DBG will be called. 
+
+If you are lucky you'll see a healthy looking wave, like this cutie little square wave spat out into your console:
+
+```
+Block is 1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled
+[0⎺‾⎺x⎽_⎽]
+``
+
+Or a sine: 
 
 ```
 Block is 1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled
 [0—⎻⎺‾⎺⎻—x—⎼⎽_⎽⎼—]
 ```
+
+Get the sparkline in its full sample-by-sample verbose glory:
+
+`melatonin::printSparkline(myAudioBlock, false);`
+
+
+If you don't want the output normalized for some reason:
+
+`melatonin::printSparkline(myAudioBlock, true, false);`
+
+## Teach lldb how to output sparklines
+
+Thanks to Jim Credland's [lldb script](https://github.com/jcredland/juce-toys/blob/master/juce_lldb_xcode.py) I felt bold enough to jump in and figure out how to get sparklines in your lldb-driven IDE.
+
+Put this line in a file named ~/.lldbinit (create it if necessary), pointing to `sparklines.py`:
+
+```
+command script import ~/path/to/melatonin_audio_sparklines/sparklines.py
+```
+
+## Installation 
+
+Set up a git submodule in your project tracking the `main` branch. I usually stick mine in a `modules` directory.
+
+```git
+git submodule add -b main https://github.com/sudara/melatonin_audio_sparklines modules/melatonin_audio_sparklines
+git commit -m "Added melatonin_audio_sparklines submodule."
+```
+
+To update melatonin_audio_sparklines, you can:
+```git
+git submodule update --remote --merge modules/melatonin_audio_sparklines
+```
+
+If you use CMake (my condolences), inform JUCE about the module in your `CMakeLists.txt`:
+```
+juce_add_module("modules/melatonin_audio_sparklines")
+```
+
+Include the header where needed:
+
+```
+#include "melatonin_audio_sparklines/melatonin_audio_sparklines.h"
+
+```
+
 
 ## Motivation
 
@@ -33,7 +90,6 @@ One can always write a bunch of float values to the screen, but humans can't rel
 ## Sparklines
 
 I'm a big [Edward Tufte](https://www.edwardtufte.com/tufte/) fan and one of the things he champions is "data-intense, design-simple, word-sized graphics" which he gave the name "[sparkline](https://en.wikipedia.org/wiki/Sparkline)."
-
 
 At a glance, you can tell some general characteristics about the data series. Individual data points are not relevant, the trend is! 
 
@@ -113,61 +169,13 @@ Here's an example of block going out of audio bounds. The `E` lets you know a sa
 The collapsed version looks more clearly sinusoidal, but we can see it's going out of bounds. We still have a precise grasp of how many samples in the buffer are empty.
 
 
-## Installation 
+## Caveats
 
-Good citizen don't litter, and they certainly don't copy and paste C++ code. It's 2021, remember?
-
-Set up a git submodule in your project tracking the `main` branch. I usually stick mine in a `modules` directory.
-
-```git
-git submodule add -b main https://github.com/sudara/melatonin_audio_sparklines modules/melatonin_audio_sparklines
-git commit -m "Added melatonin_audio_sparklines submodule."
-```
-
-To update melatonin_inspector, you can:
-```git
-git submodule update --remote --merge modules/melatonin_audio_sparklines
-```
-
-If you use CMake (my condolences), inform JUCE about the module in your `CMakeLists.txt`:
-```
-juce_add_module("modules/melatonin_audio_sparklines")
-```
-
-Include the header where needed:
-
-```
-#include "melatonin_audio_sparklines/melatonin_audio_sparklines.h"
-
-```
-
-## Usage
-
-Just print your sparkline:
-
-`melatonin::printSparkline(myAudioBlock);`
-
-This will call `DBG()` for you.
-
-If you are lucky you'll see a healthy looking wave, like this cutie little square wave:
-
-```
-[0⎺‾⎺x⎽_⎽]
-```
-
-
-Get your sparkline in its full sample-by-sample verbose glory:
-
-`melatonin::printSparkline(myAudioBlock, false);`
-
-
-If you don't want the output normalized:
-
-`melatonin::printSparkline(myAudioBlock, true, false);`
+Tested on VS2019 on Windows, Xcode on MacOS and CLion on Windows and MacOS.
 
 ### Xcode gotcha
 
-If you are using Xcode exclusively, plop this somewhere
+If you are using Xcode exclusively, you might want to plop this somewhere
 
 ```cpp
 #define MELATONIN_SPARKLINE_XCODE=1
@@ -175,13 +183,9 @@ If you are using Xcode exclusively, plop this somewhere
 
 MacOS font rendering flips the height of ⎺ and ‾, but it's fine in MacOS CLion, etc. 
 
-## Caveats
-
-Tested on VS2019 on Windows, Xcode on MacOS and CLion on Windows and MacOS.
-
 ### Don't like how they look?
 
-I'm not a fan of VS2019 with the default Consolas font. Everywhere else it seems to look good! Open an issue if not.
+Yeah, I'm not a fan of VS2019 with the default Consolas font. Everywhere else it seems to look good! Open an issue if you can make it nicer!
 
 ### Reminder: Don't leave printSparkline in your audio path
 
