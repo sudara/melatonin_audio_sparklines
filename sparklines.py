@@ -101,9 +101,9 @@ def sparkline(samples):
         if num_zeros > 1:
             output += "(" + str(num_zeros) + ")"
             num_zeros = 0
-        if ((sample < -1.0) or (sample > 1.0)): # unnormalized out of bounds?
+        if ((sample < -1.0) or (sample > 1.0)): # out of bounds?
             output += "E"
-        elif ((i > 0) and ((sample < 0) is not (sample < 0))):
+        elif ((i > 0) and ((sample < 0) is not (samples[i-1] < 0))):
             output += "x" # zero crossing
         else:
             # normalize so we can see detail
