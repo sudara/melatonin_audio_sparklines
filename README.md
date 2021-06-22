@@ -13,7 +13,7 @@ If you are lucky you'll see a healthy looking wave, like this cutie little squar
 ```
 Block is 1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled
 [0⎺‾⎺x⎽_⎽]
-``
+```
 
 Or a sine: 
 
@@ -40,6 +40,15 @@ Put this line in a file named ~/.lldbinit (create it if necessary), pointing to 
 ```
 command script import ~/path/to/melatonin_audio_sparklines/sparklines.py
 ```
+
+On hover you'll get a summary:
+
+![Screenshot 2021-06-22 SineMachine – CycleNote cpp - CLion](https://user-images.githubusercontent.com/472/122944838-6e992a80-d378-11eb-8f87-e7e858da6703.jpg)
+
+On click you'll get sparklines and the ability to browse samples:
+
+![Screenshot 2021-06-22 SineMachine – CycleNote cpp - CLion](https://user-images.githubusercontent.com/472/122945885-2fb7a480-d379-11eb-90c4-2ebe10af1775.jpg)
+
 
 ## Installation 
 
