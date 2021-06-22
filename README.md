@@ -27,9 +27,11 @@ Get the sparkline in its full sample-by-sample verbose glory:
 `melatonin::printSparkline(myAudioBlock, false);`
 
 
-If you don't want the output normalized for some reason:
+For unnormalized display:
 
-`melatonin::printSparkline(myAudioBlock, true, false);`
+```
+melatonin::printSparkline(myAudioBlock, true, false);
+```
 
 ## Teach lldb how to output sparklines
 
@@ -64,7 +66,7 @@ To update melatonin_audio_sparklines, you can:
 git submodule update --remote --merge modules/melatonin_audio_sparklines
 ```
 
-If you use CMake (my condolences), inform JUCE about the module in your `CMakeLists.txt`:
+If you use CMake (my condolences (jk jk)), inform JUCE about the module in your `CMakeLists.txt`:
 ```
 juce_add_module("modules/melatonin_audio_sparklines")
 ```
