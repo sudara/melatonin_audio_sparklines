@@ -155,7 +155,7 @@ We can see a big empty chunk of zeros at the end of the block. The number 234 te
  
 This looks clearly sinusoidal, but we can see it's going out of bounds. We still have a precise grasp of how many samples in the buffer are empty.
 
-### Normalized
+## Normalized
 
 To make sure trends are visible, we normalize before displaying.
 
