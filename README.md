@@ -76,7 +76,6 @@ Include the header where needed:
 
 ```
 
-
 ## Motivation
 
 I've been working on unit tests at a low level. It's been going well, but I kept feeling like I didn't have enough insight into what my various buffers and blocks of audio look like. 
@@ -122,18 +121,16 @@ x = zero crossing
 E = out of bounds (below -1.0 or above 1.0)
 ```
 
-Here's what 2 cycles of a healthy sine wave look like (it keeps scrolling right) with all samples represented:
+Here's what 2 cycles of a healthy sine wave would like with every sample represented:
 
 
-```
-[0———⎻⎻⎻⎻⎻⎻⎻‾‾‾‾‾‾‾‾⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺‾‾‾‾‾‾‾‾‾⎻⎻⎻⎻⎻⎻⎻———x——⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽⎽⎽⎽____________________________________⎽⎽⎽⎽⎽⎽⎽⎽⎼⎼⎼⎼⎼⎼⎼————x——⎻⎻⎻⎻⎻⎻⎻‾‾‾‾‾‾‾‾⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺‾‾‾‾‾‾‾‾‾⎻⎻⎻⎻⎻⎻⎻———x——⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽⎽⎽⎽____________________________________⎽⎽⎽⎽⎽⎽⎽⎽⎼⎼⎼⎼⎼⎼⎼———]
-```
+> ```[0———⎻⎻⎻⎻⎻⎻⎻‾‾‾‾‾‾‾‾⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺‾‾‾‾‾‾‾‾‾⎻⎻⎻⎻⎻⎻⎻———x——⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽⎽⎽⎽____________________________________⎽⎽⎽⎽⎽⎽⎽⎽⎼⎼⎼⎼⎼⎼⎼————x——⎻⎻⎻⎻⎻⎻⎻‾‾‾‾‾‾‾‾⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺‾‾‾‾‾‾‾‾‾⎻⎻⎻⎻⎻⎻⎻———x——⎼⎼⎼⎼⎼⎼⎼⎽⎽⎽⎽⎽⎽⎽⎽⎽____________________________________⎽⎽⎽⎽⎽⎽⎽⎽⎼⎼⎼⎼⎼⎼⎼———]```
 
 Cool! It's bulky and elongated, but we can see some trends...
 
 ## Cleaning them up 
 
-To do Tufte right, we should increase the amount of signal per surface area. We can collapse the redundant data, leaving us with just the "trend."
+To do Tufte right, we want increase the data density as much as possible. Collapsing the redundant data leaves us with just the "trend."
 
 ```
 [0⎻⎺‾⎺⎻x—⎼⎽_⎽⎼—x⎻⎺‾⎺⎻x—⎼⎽_⎽⎼—] 294 samples (-0.999 to 0.999)
@@ -148,9 +145,22 @@ This is useful. We can glean a lot of info from this example:
 * We know there are 294 samples in total
 * We know the amplitude ranges from -0.999 to 0.999.
 
+## More complex example
+
+Here's an example of block going out of audio bounds. The `E` lets you know a sample is out of bounds. We can see a big empty chunk of zeros at the end of the block. The number 234 tells us exactly how many consecutive zeros there are.
+
+```
+[0⎻⎺⎻x—x⎻x—⎼⎽_E_⎽⎼—x⎻⎺‾E‾⎺⎻x—⎼—x⎻⎺⎻x—⎼⎽_E_⎽⎼—0⎻⎺‾E‾⎺⎻x—⎼—x⎻⎺⎻x—⎼⎽_E_⎽⎼—0(234)] 1024 samples (-1.76012, 1.76013)
+
+```
+ 
+This looks clearly sinusoidal, but we can see it's going out of bounds. We still have a precise grasp of how many samples in the buffer are empty.
+
 ### Normalized
 
-Without normalization, quiet volumes might get something that looks like this:
+To make sure trends are visible, we normalize before displaying.
+
+Without normalization, a signal with a quiter volume might look like so:
 
 ```
 Block is 2 channels, 128 samples, min -0.0951679, max 0.11609, 50.7812% filled
@@ -166,21 +176,12 @@ Block is 2 channels, 128 samples, min -0.0951679, max 0.11609, 50.7812% filled
 
 Now we can see the shape of the waveform and look to the metadata for the scale.
 
-## More complex examples
-
-Here's an example of block going out of audio bounds. The `E` lets you know a sample is out of bounds. We can see a big empty chunk of zeros at the end of the block, and the number 234 tells us exactly how many consecutive zeros there are.
-
-```
-[0⎻⎺⎻x—x⎻x—⎼⎽_E_⎽⎼—x⎻⎺‾E‾⎺⎻x—⎼—x⎻⎺⎻x—⎼⎽_E_⎽⎼—0⎻⎺‾E‾⎺⎻x—⎼—x⎻⎺⎻x—⎼⎽_E_⎽⎼—0(234)] 1024 samples (-1.76012, 1.76013)
-
-```
- 
-The collapsed version looks more clearly sinusoidal, but we can see it's going out of bounds. We still have a precise grasp of how many samples in the buffer are empty.
-
 
 ## Caveats
 
-Tested on VS2019 on Windows, Xcode on MacOS and CLion on Windows and MacOS.
+`printSparklines` was tested on VS2019 on Windows, Xcode on MacOS and CLion on Windows and MacOS.
+
+The lldb python script was tested on MacOS CLion and Xcode only.
 
 ### Xcode gotcha
 
@@ -190,11 +191,11 @@ If you are using Xcode exclusively, you might want to plop this somewhere
 #define MELATONIN_SPARKLINE_XCODE=1
 ```
 
-MacOS font rendering flips the height of ⎺ and ‾, but it's fine in MacOS CLion, etc. 
+MacOS native font rendering seems to flip the height of two of the characters (⎺ vs. ‾) but it's fine in MacOS CLion, etc. 
 
 ### Don't like how they look?
 
-Yeah, I'm not a fan of VS2019 with the default Consolas font. Everywhere else it seems to look good! Open an issue if you can make it nicer!
+I'm not a fan of VS2019 with the default Consolas font. Everywhere else it seems to look good! Open an issue if you can make it nicer!
 
 ### Reminder: Don't leave printSparkline in your audio path
 
