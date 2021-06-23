@@ -11,6 +11,7 @@
 
 # Variable formatting docs https://lldb.llvm.org/use/variable.html
 
+import sys
 import lldb
 
 def __lldb_init_module(debugger, dict):
@@ -104,7 +105,9 @@ def sparkline(samples):
         if num_zeros > 1:
             output += "(" + str(num_zeros) + ")"
             num_zeros = 0
-        if ((sample < -1.0) or (sample > 1.0)): # out of bounds?
+        # for some reason sys.float_info.epsilon is nowhere near
+        # the rounding error introduced by lldb when importing float values to python
+        if ((abs(sample) - 0.00000015) > 1.0): # out of bounds?
             output += "E"
         elif ((i > 0) and ((sample < 0) is not (samples[i-1] < 0))):
             output += "x" # zero crossing

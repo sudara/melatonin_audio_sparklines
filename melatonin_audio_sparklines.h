@@ -103,7 +103,7 @@ namespace melatonin
                 }
                 else if ((i > 0) && ((value < 0) != (block.getSample (c, i - 1) < 0)))
                     output = 'x';
-                else if ((unnormalizedValue < -1.0) || (unnormalizedValue > 1.0))
+                else if ((std::abs(unnormalizedValue) - std::numeric_limits<SampleType>::epsilon()) > 1.0 )
                     output = 'E';
                 else
                 {
