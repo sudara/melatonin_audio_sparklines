@@ -43,17 +43,20 @@ def audio_block_summary (valobj,internal_dict):
         
     return str(num_channels) + ' channel(s), ' + str(num_samples) + ' samples, ' + 'min ' + str(minValue) + ', max ' + str(maxValue) 
 
-def get_channels_from_audio_block(channels_member, num_channels, num_samples):
+# Called before the provider is setup
+# So the channels child still exists and hasn't been replaced by the synthetic
+def get_channels_from_audio_block(channels_child_member, num_channels, num_samples):
     channels = []
-    first_channel = channels_member.GetChildAtIndex(0)
+    first_channel = channels_child_member.GetChildAtIndex(0)
     float_type = first_channel.GetType().GetPointeeType() # float or double
     float_size = float_type.GetByteSize()
     
-    # Pointer o pointers
-    offset = 16 
+    # channels* is a pointer to float pointers
+    # but I'm not sure why there are 16 bytes of offset to start
+    offset = first_channel.GetType().GetByteSize() * 2
+
     for i in range(num_channels):
-        #print("offset is: " + str(offset))
-        channels.append(channels_member.CreateChildAtOffset('channel[' + str(i) + ']', offset, float_type.GetArrayType(num_samples)))
+        channels.append(channels_child_member.CreateChildAtOffset('channel[' + str(i) + ']', offset, float_type.GetArrayType(num_samples)))
         offset += num_samples * float_size
     return channels
     
