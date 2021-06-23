@@ -118,7 +118,7 @@ def sparkline(samples):
         output += "(" + str(num_zeros) + ")"
            
     output += "]"
-    # print(output)
+    print(output)
     return output
 
 # This lets us create "synthetic children" of an AudiaBlock
@@ -196,4 +196,4 @@ class AudioBlockChannelsProvider:
         
         # Took me a while to figure out GetArrayType even existed!
         # https://invent.kde.org/tcanabrava/kdevelop/blob/5bd8475f3e0893fb8af299ea1f99042c2c2324bd/plugins/lldb/formatters/helpers.py#L279-281
-        return self.valobj.CreateValueFromData("sparkline[" + str(index) + "]", data, child_type.GetArrayType(len(string) * 4))
+        return self.valobj.CreateValueFromData("sparkline[" + str(index) + "]", data, child_type.GetArrayType(data.GetByteSize()))
