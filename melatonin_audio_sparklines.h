@@ -51,8 +51,11 @@ namespace melatonin
     template <typename SampleType>
     static inline juce::String summaryOf (const AudioBlock<SampleType>& block)
     {
-        std::vector<SampleType> min (block.getNumChannels());
-        std::vector<SampleType> max (block.getNumChannels());
+        // We need to handle the case where e.g. an AudioBlock<const float> is passed to this function
+        using NonConstSampleType = std::remove_const_t<SampleType>;
+
+        std::vector<NonConstSampleType> min (block.getNumChannels());
+        std::vector<NonConstSampleType> max (block.getNumChannels());
 
         for (size_t ch = 0; ch < block.getNumChannels(); ++ch)
         {
