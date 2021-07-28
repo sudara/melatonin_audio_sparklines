@@ -51,11 +51,21 @@ namespace melatonin
     template <typename SampleType>
     static inline juce::String summaryOf (const AudioBlock<SampleType>& block)
     {
-        float min = juce::FloatVectorOperations::findMinimum (block.getChannelPointer (0), (int) block.getNumSamples());
-        float max = juce::FloatVectorOperations::findMaximum (block.getChannelPointer (0), (int) block.getNumSamples());
+        std::vector<SampleType> min (block.getNumChannels());
+        std::vector<SampleType> max (block.getNumChannels());
+
+        for (size_t ch = 0; ch < block.getNumChannels(); ++ch)
+        {
+            min[ch] = juce::FloatVectorOperations::findMinimum (block.getChannelPointer (ch), (int) block.getNumSamples());
+            max[ch] = juce::FloatVectorOperations::findMaximum (block.getChannelPointer (ch), (int) block.getNumSamples());
+        }
+
+        const auto overallMin = juce::FloatVectorOperations::findMinimum (min.data(), (int) block.getNumChannels());
+        const auto overallMax = juce::FloatVectorOperations::findMaximum (max.data(), (int) block.getNumChannels());
+
         std::ostringstream summary;
 
-        summary << "Block is " << block.getNumChannels() << " channels, " << block.getNumSamples() << " samples, min " << min << ", max " << max << ", " << percentFilled (block) << "% filled\n";
+        summary << "Block is " << block.getNumChannels() << " channels, " << block.getNumSamples() << " samples, min " << overallMin << ", max " << overallMax << ", " << percentFilled (block) << "% filled\n";
         return summary.str();
     }
 
