@@ -80,8 +80,8 @@ namespace melatonin
                 juce::String waveform = juce::CharPointer_UTF8 ("_\xe2\x8e\xbd\xe2\x8e\xbc\xe2\x80\x94\xe2\x8e\xbb\xe2\x8e\xba\xe2\x80\xbe"); // L"_⎽⎼—⎻⎺‾";
             #endif
 
-            float absMax = abs (juce::FloatVectorOperations::findMaximum (block.getChannelPointer (c), block.getNumSamples()));
-            float absMin = abs (juce::FloatVectorOperations::findMinimum (block.getChannelPointer (c), block.getNumSamples()));
+            float absMax = abs (juce::FloatVectorOperations::findMaximum (block.getChannelPointer (c), (int) block.getNumSamples()));
+            float absMin = abs (juce::FloatVectorOperations::findMinimum (block.getChannelPointer (c), (int) block.getNumSamples()));
             float channelMax = juce::jmax (absMin, absMax);
 
             sparkline += "[";
