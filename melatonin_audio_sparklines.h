@@ -157,6 +157,7 @@ namespace melatonin
     static inline void printSparkline (const AudioBlock<SampleType>& block, bool collapse = true)
     {
         DBG (sparkline (block, collapse));
+        juce::ignoreUnused (block, collapse);
     }
 
     // asArray adds a comma to help you copy and paste the numbers into another context, like python
