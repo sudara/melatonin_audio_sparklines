@@ -22,6 +22,13 @@ namespace melatonin
     template <typename SampleType>
     using AudioBlock = juce::dsp::AudioBlock<SampleType>;
 
+    template <typename T> struct TypeNameString               { static std::string get() { return typeid (T).name(); } };
+    template <typename T> struct TypeNameString<const T>      { static std::string get() { return "const " + TypeNameString<std::remove_const_t<T>>::get(); }};
+    template <>           struct TypeNameString<float>        { static std::string get() { return "float"; } };
+    template <>           struct TypeNameString<double>       { static std::string get() { return "double"; } };
+
+    template <typename T> std::string typeNameString() { return TypeNameString<T>::get(); }
+
     // This only reports when more than one 0 is in a row
     // In other words, it won't report a single zero starting a sine wave, for example
     template <typename SampleType>
@@ -68,7 +75,12 @@ namespace melatonin
 
         std::ostringstream summary;
 
-        summary << "Block is " << block.getNumChannels() << " channels, " << block.getNumSamples() << " samples, min " << overallMin << ", max " << overallMax << ", " << percentFilled (block) << "% filled\n";
+        summary << "AudioBlock<" << typeNameString<SampleType>() <<
+                   "> (" << block.getNumChannels() << (block.getNumChannels() == 1 ? " channel, " : " channels, ") <<
+                   block.getNumSamples() << " samples, min " <<
+                   overallMin << ", max " <<
+                   overallMax << ", " << percentFilled (block) << "% filled) with content\n";
+
         return summary.str();
     }
 

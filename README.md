@@ -11,14 +11,14 @@ Call `melatonin::printSparkline(myAudioBlock);` and under the hood, DBG will be 
 If you are lucky, you'll see a healthy looking wave (like this cutie little square wave) spat out into your console:
 
 ```
-Block is 1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled
+AudioBlock<float> (1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled) with content
 [0⎺‾⎺x⎽_⎽]
 ```
 
 Or a sine: 
 
 ```
-Block is 1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled
+AudioBlock<const double> (1 channel, 441 samples, min -0.999994, max 0.999994, 100% filled) with content
 [0—⎻⎺‾⎺⎻—x—⎼⎽_⎽⎼—]
 ```
 
