@@ -113,7 +113,12 @@ In addition to the following features:
 0 = true 0
 x = zero crossing
 E = out of bounds (below -1.0 or above 1.0)
+I = Inf (Infinity, meaning you've divided by zero)
+N = NaN (undefined calculation that's not INF)
+S = Subnormal detected
 ```
+
+
 
 Here's what 2 cycles of a healthy sine wave would like with every sample represented:
 

@@ -86,12 +86,12 @@ namespace melatonin
         juce::String sparkline = summaryOf (block);
         for (int c = 0; c < (int) block.getNumChannels(); ++c)
         {
-            // Xcode and MacOS Terminal font rendering flips the height of ‾ and ⎺
-            #ifdef MELATONIN_SPARKLINE_XCODE
-                juce::String waveform = juce::CharPointer_UTF8 ("_\xe2\x8e\xbd\xe2\x8e\xbc\xe2\x80\x94\xe2\x8e\xbb\xe2\x80\xbe\xe2\x8e\xba"); // L"_⎽⎼—⎻‾⎺"; // L"˙ॱᐧ-⸱․_"; ˙ॱᐧ-⸱․_ 000  L"▁▂▃▄▅▆▇█";
-            #else
-                juce::String waveform = juce::CharPointer_UTF8 ("_\xe2\x8e\xbd\xe2\x8e\xbc\xe2\x80\x94\xe2\x8e\xbb\xe2\x8e\xba\xe2\x80\xbe"); // L"_⎽⎼—⎻⎺‾";
-            #endif
+// Xcode and MacOS Terminal font rendering flips the height of ‾ and ⎺
+#ifdef MELATONIN_SPARKLINE_XCODE
+            juce::String waveform = juce::CharPointer_UTF8 ("_\xe2\x8e\xbd\xe2\x8e\xbc\xe2\x80\x94\xe2\x8e\xbb\xe2\x80\xbe\xe2\x8e\xba"); // L"_⎽⎼—⎻‾⎺"; // L"˙ॱᐧ-⸱․_"; ˙ॱᐧ-⸱․_ 000  L"▁▂▃▄▅▆▇█";
+#else
+            juce::String waveform = juce::CharPointer_UTF8 ("_\xe2\x8e\xbd\xe2\x8e\xbc\xe2\x80\x94\xe2\x8e\xbb\xe2\x8e\xba\xe2\x80\xbe"); // L"_⎽⎼—⎻⎺‾";
+#endif
 
             float absMax = abs (juce::FloatVectorOperations::findMaximum (block.getChannelPointer (c), (int) block.getNumSamples()));
             float absMin = abs (juce::FloatVectorOperations::findMinimum (block.getChannelPointer (c), (int) block.getNumSamples()));
@@ -104,11 +104,9 @@ namespace melatonin
                 float unnormalizedValue = block.getSample (c, i);
                 float value = normalize && channelMax != 0 ? unnormalizedValue / channelMax : unnormalizedValue;
 
-                // Asserts when you are dividing by zero...
-                // Use printSamples() to figure out what's up
-                jassert (!isnan (value));
-
                 juce::juce_wchar output;
+                auto type = std::fpclassify(value);
+
                 if (value == 0)
                 {
                     output = '0';
@@ -116,7 +114,13 @@ namespace melatonin
                 }
                 else if ((i > 0) && ((value < 0) != (block.getSample (c, i - 1) < 0)))
                     output = 'x';
-                else if ((std::abs(unnormalizedValue) - std::numeric_limits<SampleType>::epsilon()) > 1.0 )
+                else if (type == FP_NAN)
+                    output = 'N';
+                else if (type == FP_INFINITE)
+                    output = 'I';
+                else if (type == FP_SUBNORMAL)
+                    output = 'S';
+                else if ((std::abs (unnormalizedValue) - std::numeric_limits<SampleType>::epsilon()) > 1.0)
                     output = 'E';
                 else
                 {
