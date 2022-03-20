@@ -1,4 +1,4 @@
-Read [my blog article on audio sparklines!](https://melatonin.dev/blog/audio-sparklines/).
+Read [my blog article on audio sparklines!](https://melatonin.dev/blog/audio-sparklines/)
 
 # Melatonin Audio Sparklines
 
