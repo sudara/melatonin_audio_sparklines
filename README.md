@@ -1,10 +1,10 @@
+Read [my blog article on audio sparklines!](https://melatonin.dev/blog/audio-sparklines/).
+
 # Melatonin Audio Sparklines
 
 This is a C++ JUCE module that summarizes and visualizes what's in an [AudioBlock](https://docs.juce.com/master/classdsp_1_1AudioBlock.html).
 
 It's nice to get a quick idea of what's happening to your JUCE audio buffers during development or tests.
-
-Read [my blog article on the motivation behind audio sparklines](https://melatonin.dev/blog/audio-sparklines/).
 
 ## Installation 
 
@@ -55,7 +55,7 @@ You can output the sparkline in full sample-by-sample uncompressed glory with `m
 
 ## lldb installation
 
-Thanks to Jim Credland's [lldb script](https://github.com/jcredland/juce-toys/blob/master/juce_lldb_xcode.py) I felt bold enough to jump in and figure out how to get sparklines in your lldb-driven IDE.
+Thanks to Jim Credland's [existing lldb formatters](https://github.com/jcredland/juce-toys/blob/master/juce_lldb_xcode.py) I felt bold enough to jump in and figure out how to get sparklines in your lldb-driven IDE.
 
 Put this line in a file named ~/.lldbinit (create it if necessary), pointing to `sparklines.py`:
 
@@ -71,6 +71,7 @@ On click you'll get sparklines and the ability to browse samples:
 
 ![Screenshot 2021-06-22 SineMachine – CycleNote cpp - CLion](https://user-images.githubusercontent.com/472/122945885-2fb7a480-d379-11eb-90c4-2ebe10af1775.jpg)
 
+If you'd like to read more about this, read my post on [creating lldb type summaries and children](https://melatonin.dev/blog/how-to-create-lldb-type-summaries-and-synthetic-children-for-your-custom-types/).
 
 ## Feature key
 
