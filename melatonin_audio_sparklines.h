@@ -45,7 +45,7 @@ namespace melatonin
     static inline float percentFilled (const AudioBlock<SampleType>& block)
     {
         size_t numberOfSamples = block.getNumChannels() * block.getNumSamples();
-        return (numberOfSamples - numberOfConsecutiveZeros (block)) / (float) numberOfSamples * 100;
+        return (float) (numberOfSamples - numberOfConsecutiveZeros (block)) / (float) numberOfSamples * 100;
     }
 
     template <typename SampleType>
@@ -81,68 +81,83 @@ namespace melatonin
 
      */
     template <typename SampleType>
+    [[nodiscard]] static inline juce::String sparkline (const SampleType* data, size_t numSamples, bool collapse = true, bool normalize = true)
+    {
+        juce::String sparkline;
+// Xcode and MacOS Terminal font rendering flips the height of ‾ and ⎺
+#ifdef MELATONIN_SPARKLINE_XCODE
+        juce::String waveform = juce::CharPointer_UTF8 ("_\xe2\x8e\xbd\xe2\x8e\xbc\xe2\x80\x94\xe2\x8e\xbb\xe2\x80\xbe\xe2\x8e\xba"); // L"_⎽⎼—⎻‾⎺"; // L"˙ॱᐧ-⸱․_"; ˙ॱᐧ-⸱․_ 000  L"▁▂▃▄▅▆▇█";
+#else
+        juce::String waveform = juce::CharPointer_UTF8 ("_\xe2\x8e\xbd\xe2\x8e\xbc\xe2\x80\x94\xe2\x8e\xbb\xe2\x8e\xba\xe2\x80\xbe"); // L"_⎽⎼—⎻⎺‾";
+#endif
+
+        SampleType absMax = abs (juce::FloatVectorOperations::findMaximum (data, (int) numSamples));
+        SampleType absMin = abs (juce::FloatVectorOperations::findMinimum (data, (int) numSamples));
+        SampleType channelMax = juce::jmax (absMin, absMax);
+
+        sparkline += "[";
+        size_t numZeros = 0;
+        for (int i = 0; i < (int) numSamples; ++i)
+        {
+            SampleType unnormalizedValue = data[i];
+            SampleType value = normalize && channelMax != 0 ? unnormalizedValue / channelMax : unnormalizedValue;
+
+            juce::juce_wchar output;
+            auto type = std::fpclassify (value);
+
+            if (value == 0)
+            {
+                output = '0';
+                numZeros++;
+            }
+            else if ((i > 0) && ((value < 0) != (data[i - 1] < 0)))
+                output = 'x';
+            else if (type == FP_NAN)
+                output = 'N';
+            else if (type == FP_INFINITE)
+                output = 'I';
+            else if (type == FP_SUBNORMAL)
+                output = 'S';
+            else if ((std::abs (unnormalizedValue) - std::numeric_limits<SampleType>::epsilon()) > 1.0)
+                output = 'E';
+            else
+            {
+                SampleType normalizedValue = (value + 1) / 2;
+                output = waveform[(int) (normalizedValue * 7.0)];
+            }
+            if (collapse && (((output != '0') && numZeros > 1) || ((output == '0') && i == (int) (numSamples - 1))))
+            {
+                sparkline << "(" << numZeros << ")";
+                numZeros = 0;
+            }
+            else if ((output != '0') && numZeros == 1)
+            {
+                sparkline += output;
+                numZeros = 0;
+            }
+            else if (i == 0 || !collapse || (output != sparkline.getLastCharacter()))
+                sparkline += output;
+        }
+        return sparkline;
+    }
+
+    template <typename SampleType>
     static inline juce::String sparkline (const AudioBlock<SampleType>& block, bool collapse = true, bool normalize = true)
     {
         juce::String sparkline = summaryOf (block);
-        for (int c = 0; c < (int) block.getNumChannels(); ++c)
+        for (size_t c = 0; c < block.getNumChannels(); ++c)
         {
-// Xcode and MacOS Terminal font rendering flips the height of ‾ and ⎺
-#ifdef MELATONIN_SPARKLINE_XCODE
-            juce::String waveform = juce::CharPointer_UTF8 ("_\xe2\x8e\xbd\xe2\x8e\xbc\xe2\x80\x94\xe2\x8e\xbb\xe2\x80\xbe\xe2\x8e\xba"); // L"_⎽⎼—⎻‾⎺"; // L"˙ॱᐧ-⸱․_"; ˙ॱᐧ-⸱․_ 000  L"▁▂▃▄▅▆▇█";
-#else
-            juce::String waveform = juce::CharPointer_UTF8 ("_\xe2\x8e\xbd\xe2\x8e\xbc\xe2\x80\x94\xe2\x8e\xbb\xe2\x8e\xba\xe2\x80\xbe"); // L"_⎽⎼—⎻⎺‾";
-#endif
-
-            float absMax = abs (juce::FloatVectorOperations::findMaximum (block.getChannelPointer (c), (int) block.getNumSamples()));
-            float absMin = abs (juce::FloatVectorOperations::findMinimum (block.getChannelPointer (c), (int) block.getNumSamples()));
-            float channelMax = juce::jmax (absMin, absMax);
-
-            sparkline += "[";
-            size_t numZeros = 0;
-            for (int i = 0; i < (int) block.getNumSamples(); ++i)
-            {
-                float unnormalizedValue = block.getSample (c, i);
-                float value = normalize && channelMax != 0 ? unnormalizedValue / channelMax : unnormalizedValue;
-
-                juce::juce_wchar output;
-                auto type = std::fpclassify(value);
-
-                if (value == 0)
-                {
-                    output = '0';
-                    numZeros++;
-                }
-                else if ((i > 0) && ((value < 0) != (block.getSample (c, i - 1) < 0)))
-                    output = 'x';
-                else if (type == FP_NAN)
-                    output = 'N';
-                else if (type == FP_INFINITE)
-                    output = 'I';
-                else if (type == FP_SUBNORMAL)
-                    output = 'S';
-                else if ((std::abs (unnormalizedValue) - std::numeric_limits<SampleType>::epsilon()) > 1.0)
-                    output = 'E';
-                else
-                {
-                    float normalizedValue = (value + 1) / 2;
-                    output = waveform[(int) (normalizedValue * 7.0)];
-                }
-                if (collapse && (((output != '0') && numZeros > 1) || ((output == '0') && i == (int) (block.getNumSamples() - 1))))
-                {
-                    sparkline << "(" << numZeros << ")";
-                    numZeros = 0;
-                }
-                else if ((output != '0') && numZeros == 1)
-                {
-                    sparkline += output;
-                    numZeros = 0;
-                }
-                else if (i == 0 || !collapse || (output != sparkline.getLastCharacter()))
-                    sparkline += output;
-            }
+            sparkline += ::melatonin::sparkline<SampleType> (block.getChannelPointer (c), block.getNumSamples(), collapse, normalize);
             sparkline += "]\n";
         }
         return sparkline;
+    }
+
+    template <typename SampleType>
+    static inline juce::String sparkline (juce::AudioBuffer<SampleType>& buffer, bool collapse = true, bool normalize = true)
+    {
+        auto block = AudioBlock<SampleType> (buffer);
+        return sparkline (block, collapse, normalize);
     }
 
     template <typename SampleType>
@@ -150,6 +165,18 @@ namespace melatonin
     {
         DBG (sparkline (block, collapse));
         juce::ignoreUnused (block, collapse);
+    }
+
+    template <typename SampleType>
+    static inline void printSparkline (const SampleType* data, size_t size, bool collapse = true)
+    {
+        DBG (sparkline<SampleType> (data, size, collapse));
+    }
+
+    template <typename SampleType>
+    static inline void printSparkline (juce::AudioBuffer<SampleType>& buffer, bool collapse = true)
+    {
+        DBG (sparkline (buffer, collapse));
     }
 
     // asArray adds a comma to help you copy and paste the numbers into another context, like python
@@ -167,4 +194,26 @@ namespace melatonin
         }
         DBG (output);
     }
+
+    template <typename SampleType>
+    static inline void printSamples (AudioBlock<SampleType>&& block, const int precision = 3, bool asArray = false)
+    {
+        printSamples (block, precision, asArray);
+    }
+
+    template <typename SampleType>
+    static inline void printSamples (SampleType* data, size_t numSamples, const int precision = 3, bool asArray = false)
+    {
+        juce::String output;
+        for (int i = 0; i < (int) numSamples; i++)
+        {
+            float value = data[i];
+            output += juce::String (value, precision); // 3 significant digits by default
+            if (asArray)
+                output += ",";
+            output += " ";
+        }
+        DBG (output);
+    }
+
 }
