@@ -202,6 +202,21 @@ namespace melatonin
     }
 
     template <typename SampleType>
+    static inline void printSamples (std::vector<SampleType> data, const int precision = 3, bool asArray = false)
+    {
+        juce::String output;
+        for (int i = 0; i < (int) data.size(); i++)
+        {
+            float value = data[i];
+            output += juce::String (value, precision); // 3 significant digits by default
+            if (asArray)
+                output += ",";
+            output += " ";
+        }
+        DBG (output);
+    }
+
+    template <typename SampleType>
     static inline void printSamples (SampleType* data, size_t numSamples, const int precision = 3, bool asArray = false)
     {
         juce::String output;
