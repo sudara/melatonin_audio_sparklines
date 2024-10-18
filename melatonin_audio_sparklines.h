@@ -231,4 +231,21 @@ namespace melatonin
         DBG (output);
     }
 
+    static std::string vectorToString (const std::vector<float>& v, int decimalPlaces = 6)
+    {
+        if (v.empty())
+            return "";
+
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision (decimalPlaces);
+
+        for (size_t i = 0; i < v.size(); ++i) {
+            if (i > 0)
+                oss << ", ";
+            oss << v[i] << "f";
+         }
+
+        return oss.str();
+    }
+
 }
