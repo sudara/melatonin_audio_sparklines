@@ -34,7 +34,7 @@ namespace melatonin
             {
                 auto lastSample = i > 0 ? block.getSample (c, i - 1) : 0;
                 auto currentSample = block.getSample (c, i);
-                if (currentSample == 0 && lastSample == 0)
+                if (juce::approximatelyEqual (currentSample, {}) && juce::approximatelyEqual (lastSample, {}))
                     consecutiveZeros++;
             }
         }
@@ -100,12 +100,12 @@ namespace melatonin
         for (int i = 0; i < (int) numSamples; ++i)
         {
             SampleType unnormalizedValue = data[i];
-            SampleType value = normalize && channelMax != 0 ? unnormalizedValue / channelMax : unnormalizedValue;
+            SampleType value = normalize && juce::approximatelyEqual (channelMax, {}) ? unnormalizedValue / channelMax : unnormalizedValue;
 
             juce::juce_wchar output;
             auto type = std::fpclassify (value);
 
-            if (value == 0)
+            if (juce::approximatelyEqual (value, {}))
             {
                 output = '0';
                 numZeros++;
@@ -231,7 +231,7 @@ namespace melatonin
         DBG (output);
     }
 
-    static std::string vectorToString (const std::vector<float>& v, int decimalPlaces = 6)
+    inline std::string vectorToString (const std::vector<float>& v, int decimalPlaces = 6)
     {
         if (v.empty())
             return "";
