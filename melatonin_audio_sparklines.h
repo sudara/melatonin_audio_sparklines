@@ -231,7 +231,7 @@ namespace melatonin
         DBG (output);
     }
 
-    static std::string vectorToString (const std::vector<float>& v, int decimalPlaces = 6)
+    inline std::string vectorToString (const std::vector<float>& v, int decimalPlaces = 6)
     {
         if (v.empty())
             return "";
