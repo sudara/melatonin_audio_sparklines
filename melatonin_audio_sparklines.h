@@ -202,6 +202,12 @@ namespace melatonin
     }
 
     template <typename SampleType>
+    static inline void printSamples (juce::AudioBuffer<SampleType>& buffer, const int precision = 3, bool asArray = false)
+    {
+        printSamples (AudioBlock<SampleType> (buffer), precision, asArray);
+    }
+
+    template <typename SampleType>
     static inline void printSamples (std::vector<SampleType> data, const int precision = 3, bool asArray = false)
     {
         juce::String output;
@@ -231,6 +237,23 @@ namespace melatonin
         DBG (output);
     }
 
+    static std::string blockToString (const AudioBlock<float>& block, int decimalPlaces = 6)
+    {
+        auto output = std::string();
+
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision (decimalPlaces);
+
+        for (size_t i = 0; i < block.getNumSamples(); ++i)
+        {
+            if (i > 0)
+                oss << ", ";
+            oss << block.getSample (0, i) << "f";
+        }
+
+        return oss.str();
+    }
+
     static std::string vectorToString (const std::vector<float>& v, int decimalPlaces = 6)
     {
         if (v.empty())
@@ -239,11 +262,12 @@ namespace melatonin
         std::ostringstream oss;
         oss << std::fixed << std::setprecision (decimalPlaces);
 
-        for (size_t i = 0; i < v.size(); ++i) {
+        for (size_t i = 0; i < v.size(); ++i)
+        {
             if (i > 0)
                 oss << ", ";
             oss << v[i] << "f";
-         }
+        }
 
         return oss.str();
     }
