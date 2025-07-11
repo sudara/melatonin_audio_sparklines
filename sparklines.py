@@ -1,9 +1,9 @@
 # To add AudioBlock summaries to your lldb debugger on MacOS
 # Put this line in a file named ~/.lldbinit (create it if necessary)
 #     command script import ~/path/to/melatonin_audio_sparklines/sparklines.py
-# 
 #
-# To modify this script, you can manually import / reload as needed from the lldb CLI 
+#
+# To modify this script, you can manually import / reload as needed from the lldb CLI
 #     command script import ~/projects/melatonin_audio_sparklines/sparklines.py
 #
 # When loaded, you will see the following in your debugger output:
@@ -16,8 +16,8 @@ import lldb
 
 def __lldb_init_module(debugger, dict):
     print("loading melatonin audio sparklines for JUCE AudioBlocks...")
-    debugger.HandleCommand('type synthetic add -x "juce::dsp::AudioBlock<" --python-class sparklines.AudioBlockChannelsProvider -w juce')
-    debugger.HandleCommand('type summary add -x "juce::dsp::AudioBlock<" -F sparklines.audio_block_summary -w juce')
+    debugger.HandleCommand('type synthetic add -x "juce::dsp::AudioBlock" --python-class sparklines.AudioBlockChannelsProvider')
+    debugger.HandleCommand('type summary add -x "juce::dsp::AudioBlock" -F sparklines.audio_block_summary')
 
 def audio_block_summary (valobj,internal_dict):
     num_channels = valobj.GetChildMemberWithName('numChannels').GetValueAsUnsigned()
@@ -25,10 +25,10 @@ def audio_block_summary (valobj,internal_dict):
     start_sample = valobj.GetChildMemberWithName('startSample').GetValueAsUnsigned() # private offset that subblocks have
     if num_channels is None or num_channels > 16:
         return "uninitilized AudioBlock"
-    
+
     minValue = 0
     maxValue = 0
-    
+
     # At this point, the AudioBlockChannelsProvider has already intialized
     # That provider replaces all childen, so "channels" is no longer present
     # but we have channel[0] and friends
@@ -41,8 +41,8 @@ def audio_block_summary (valobj,internal_dict):
                 maxValue = sample
             if sample < minValue:
                 minValue = sample
-        
-    return str(num_channels) + ' channel(s), ' + str(num_samples) + ' samples, ' + 'min ' + str(minValue) + ', max ' + str(maxValue) 
+
+    return str(num_channels) + ' channel(s), ' + str(num_samples) + ' samples, ' + 'min ' + str(minValue) + ', max ' + str(maxValue)
 
 # Called before the provider is setup
 # So the channels child still exists and hasn't been replaced by the synthetic
@@ -51,7 +51,7 @@ def get_channels_from_audio_block(channels_child_member, num_channels, num_sampl
     first_channel = channels_child_member.GetChildAtIndex(0)
     float_type = first_channel.GetType().GetPointeeType() # float or double
     float_size = float_type.GetByteSize()
-    
+
     # channels* is a pointer to float pointers
     # but I'm not sure why there are 16 bytes of offset to start
     offset = first_channel.GetType().GetByteSize() * 2
@@ -60,17 +60,17 @@ def get_channels_from_audio_block(channels_child_member, num_channels, num_sampl
         channels.append(channels_child_member.CreateChildAtOffset('channel[' + str(i) + ']', offset, float_type.GetArrayType(num_samples)))
         offset += num_samples * float_size
     return channels
-    
+
 # Not the friendliest way to dig into a float pointer, but it works
 # https://stackoverflow.com/a/41134167
 def get_samples_from_channel(channel, start_sample, num_samples):
     sample_list = []
-    
+
     # Appease lldb
     float_type = channel.GetChildAtIndex(0).GetType() # float or double
     float_size = float_type.GetByteSize()
     target = lldb.debugger.GetSelectedTarget()
-    
+
     # Grab the pointer location, take into consideration the AudioBlock startSample
     offset = start_sample * float_size
     #print("channel: " + str(channel))
@@ -88,7 +88,7 @@ def sparkline(samples):
     if (maxValue > 0.0):
         scale = maxValue
     else:
-        scale = 1.0 
+        scale = 1.0
     num_zeros = 0
     output = "["
     for i in range(len(samples)):
@@ -99,9 +99,9 @@ def sparkline(samples):
                 output += '0'
             num_zeros += 1
             continue
-        else: 
+        else:
             num_zeros = 0
-                
+
         if num_zeros > 1:
             output += "(" + str(num_zeros) + ")"
             num_zeros = 0
@@ -119,10 +119,10 @@ def sparkline(samples):
             character = waveform[index]
             if output[-1] != character:
                 output += character
-                
+
     if num_zeros > 1:
         output += "(" + str(num_zeros) + ")"
-           
+
     output += "]"
     print(output)
     return output
@@ -137,25 +137,25 @@ class AudioBlockChannelsProvider:
         print("number of channels: " + str(self.num_channels))
         self.num_samples = valobj.GetChildMemberWithName('numSamples').GetValueAsUnsigned()
         self.start_sample = valobj.GetChildMemberWithName('startSample').GetValueAsUnsigned() # private offset that subblocks have
-    
+
         # channels is a pointer to float pointers, so we need to tease out our actual channels
         self.channels = get_channels_from_audio_block(valobj.GetChildMemberWithName('channels'), self.num_channels, self.num_samples)
-        
-    def num_children(self): 
+
+    def num_children(self):
         return self.num_channels + 4
 
-    def get_child_index(self, name): 
+    def get_child_index(self, name):
         if str.startswith(name, "sparkline"):
             return int(name.lstrip('[').rstrip(']'))
         elif str.startswith(name, "channel["):
             return self.num_channels + int(name.lstrip('[').rstrip(']'))
         elif name == 'numChannels':
-            return self.num_channels * 2 
+            return self.num_channels * 2
         elif name == 'numSamples':
             return self.num_channels * 2 + 1
         elif name == 'startSample':
             return self.num_channels * 2 + 2
-        
+
 
     def get_child_at_index(self, index):
         if index < self.num_channels:
@@ -168,28 +168,28 @@ class AudioBlockChannelsProvider:
             return self.valobj.GetChildMemberWithName('numSamples')
         elif index == self.num_channels * 2 + 2:
             return self.valobj.GetChildMemberWithName('startSample')
-            
-            
-    def update(self): 
+
+
+    def update(self):
         # Cache the children
         return True
 
-    def has_children(self): 
+    def has_children(self):
         return self.num_channels > 0
-        
-    
+
+
     def sparkline_value(self, index, samples):
         string = sparkline(samples)
         # SBValue creation for a string took a while to figure out
         # Unfortunately I couldn't just use an lldb expression because of a bug with quotes in Clion:
         # https://youtrack.jetbrains.com/issue/CPP-25517
-        # 
-        # Once resolved, the below code could be replaced with:
-        # return self.valobj.CreateValueFromExpression("sparkline", '(char *) "hello world"') # clion quotes escaping doesn't work 
         #
-        # I also tried creating via Address before I realized Array types existed 
+        # Once resolved, the below code could be replaced with:
+        # return self.valobj.CreateValueFromExpression("sparkline", '(char *) "hello world"') # clion quotes escaping doesn't work
+        #
+        # I also tried creating via Address before I realized Array types existed
         # https://stackoverflow.com/a/64473058
-        # 
+        #
         # Other examples of SBValue creation:
         # https://github.com/llvm-mirror/lldb/blob/master/examples/synthetic/bitfield/example.py
         # https://dev.to/vejmartin/prettifying-debug-variables-in-c-with-lldb-34lf
@@ -199,7 +199,7 @@ class AudioBlockChannelsProvider:
         child_type = self.valobj.target.GetBasicType(lldb.eBasicTypeChar)
         byte_order = self.valobj.GetData().GetByteOrder()
         data = lldb.SBData.CreateDataFromCString(byte_order, child_type.GetByteSize(), string)
-        
+
         # Took me a while to figure out GetArrayType even existed!
         # https://invent.kde.org/tcanabrava/kdevelop/blob/5bd8475f3e0893fb8af299ea1f99042c2c2324bd/plugins/lldb/formatters/helpers.py#L279-281
         return self.valobj.CreateValueFromData("sparkline[" + str(index) + "]", data, child_type.GetArrayType(data.GetByteSize()))
