@@ -211,9 +211,9 @@ namespace melatonin
     static inline void printSamples (std::vector<SampleType> data, const int precision = 3, bool asArray = false)
     {
         juce::String output;
-        for (int i = 0; i < (int) data.size(); i++)
+        for (size_t i = 0; i < data.size(); i++)
         {
-            float value = data[i];
+            auto value = static_cast<float> (data[i]);
             output += juce::String (value, precision); // 3 significant digits by default
             if (asArray)
                 output += ",";
@@ -228,7 +228,7 @@ namespace melatonin
         juce::String output;
         for (int i = 0; i < (int) numSamples; i++)
         {
-            float value = data[i];
+            auto value = static_cast<float> (data[i]);
             output += juce::String (value, precision); // 3 significant digits by default
             if (asArray)
                 output += ",";
@@ -248,7 +248,7 @@ namespace melatonin
         {
             if (i > 0)
                 oss << ", ";
-            oss << block.getSample (0, i) << "f";
+            oss << block.getSample (0, static_cast<int> (i)) << "f";
         }
 
         return oss.str();
