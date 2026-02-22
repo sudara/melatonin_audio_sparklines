@@ -237,7 +237,8 @@ namespace melatonin
         DBG (output);
     }
 
-    [[maybe_unused]] static std::string blockToString (const AudioBlock<float>& block, int decimalPlaces = 6)
+    template <typename SampleType>
+    [[maybe_unused]] static std::string blockToString (const AudioBlock<SampleType>& block, int decimalPlaces = 6)
     {
         auto output = std::string();
 
@@ -254,7 +255,8 @@ namespace melatonin
         return oss.str();
     }
 
-    [[maybe_unused]] static std::string vectorToString (const std::vector<float>& v, int decimalPlaces = 6)
+    template <typename SampleType>
+    [[maybe_unused]] static std::string vectorToString (const std::vector<SampleType>& v, int decimalPlaces = 6)
     {
         if (v.empty())
             return "";
