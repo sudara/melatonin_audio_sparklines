@@ -186,7 +186,7 @@ namespace melatonin
         juce::String output;
         for (int i = 0; i < (int) block.getNumSamples(); i++)
         {
-            float value = block.getSample (0, i);
+            SampleType value = block.getSample (0, i);
             output += juce::String (value, precision); // 3 significant digits by default
             if (asArray)
                 output += ",";
@@ -213,7 +213,7 @@ namespace melatonin
         juce::String output;
         for (size_t i = 0; i < data.size(); i++)
         {
-            auto value = static_cast<float> (data[i]);
+            auto value = static_cast<SampleType> (data[i]);
             output += juce::String (value, precision); // 3 significant digits by default
             if (asArray)
                 output += ",";
@@ -228,7 +228,7 @@ namespace melatonin
         juce::String output;
         for (int i = 0; i < (int) numSamples; i++)
         {
-            auto value = static_cast<float> (data[i]);
+            auto value = static_cast<SampleType> (data[i]);
             output += juce::String (value, precision); // 3 significant digits by default
             if (asArray)
                 output += ",";
