@@ -171,12 +171,14 @@ namespace melatonin
     static inline void printSparkline (const SampleType* data, size_t size, bool collapse = true)
     {
         DBG (sparkline<SampleType> (data, size, collapse));
+        juce::ignoreUnused (data, size, collapse);
     }
 
     template <typename SampleType>
     static inline void printSparkline (juce::AudioBuffer<SampleType>& buffer, bool collapse = true)
     {
         DBG (sparkline (buffer, collapse));
+        juce::ignoreUnused (buffer, collapse);
     }
 
     // asArray adds a comma to help you copy and paste the numbers into another context, like python
